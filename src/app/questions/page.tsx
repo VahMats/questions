@@ -145,7 +145,7 @@ export default function QuestionsPage() {
                 <div className="space-y-4">
                     {questions.map((q, i) => (
                         <div key={q.id} className="p-4 bg-white rounded border border-gray-300">
-                            <p className="font-semibold">
+                            <p className="font-semibold text-gray-700">
                                 {i + 1}. {q.question}
                             </p>
                             <div className="ml-6 mt-2 text-gray-700 flex flex-col">
