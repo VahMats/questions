@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import {useParams, useSearchParams} from "next/navigation";
 
 type Question = {
     id: string;
@@ -22,9 +23,11 @@ type SelectedAnswer = {
     answer: 'answer1' | 'answer2' | 'answer3';
 };
 
-const limit = 40;
+const defaultLimit = 40;
 
 export default function QuestionsPage() {
+    const searchParams = useSearchParams();
+    const limit = searchParams.get('limit');
     const [questions, setQuestions] = useState<Question[]>([]);
     const [loading, setLoading] = useState(false);
     const [answers, setAnswers] = useState<SelectedAnswer[]>([]);
@@ -60,7 +63,7 @@ export default function QuestionsPage() {
     useEffect(() => {
         const fetchQuestions = async () => {
             setLoading(true);
-            const { data, error } = await supabase.rpc('get_random_questions', { limit_num: limit });
+            const { data, error } = await supabase.rpc('get_random_questions', { limit_num: limit ?? defaultLimit });
 
             if (error) {
                 console.error(error);
@@ -113,7 +116,7 @@ export default function QuestionsPage() {
 
                     return (
                         <div key={q.id} className="p-4 bg-white rounded border border-gray-300">
-                            <p className="font-semibold">
+                            <p className="font-semibold text-black">
                                 {i + 1}. {q.question}
                             </p>
                             <div className="ml-6 mt-2 text-gray-700 flex flex-col">
@@ -167,9 +170,9 @@ export default function QuestionsPage() {
                     ))}
                     <button
                         className={`bg-[#1c75a6] px-20 py-3 rounded-md text-white font-semibold ${
-                            answers.length !== limit ? 'cursor-not-allowed' : 'cursor-pointer'
+                            answers.length !== (Number(limit) ?? defaultLimit) ? 'cursor-not-allowed' : 'cursor-pointer'
                         }`}
-                        disabled={answers.length !== limit}
+                        disabled={answers.length !== (Number(limit) ?? defaultLimit)}
                         onClick={submitForm}
                     >
                         ՊԱՏԱՍԽԱՆԵԼ
